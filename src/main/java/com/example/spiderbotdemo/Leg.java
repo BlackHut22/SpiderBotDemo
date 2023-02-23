@@ -16,13 +16,13 @@ public class Leg {
     Point3D startingPoint;
     Point3D groundPoint;
     Spherical startingDirection;
-    int segmentLength = 700;
+    int segmentLength = 1000;
     public Leg(Point3D startingPoint, double startingDirectionPhi){
         this.startingPoint = startingPoint;
         this.startingDirection = new Spherical(0,startingDirectionPhi,getSegmentLength());
         this.segments[0] = new Legsegment(getStartingPoint(), getStartingDirection(), getSegmentLength());
         this.segments[1] = new Legsegment(getSegments()[0].getEndingPoint(), getSegments()[0].getSpherical().getNegative().addTheta(180) ,getSegmentLength());
-        this.groundPoint = getStartingPoint().add(getStartingDirection().toVector().getX(),getStartingDirection().toVector().getY(),400);
+        this.groundPoint = getStartingPoint().add(getStartingDirection().toVector().getX(),getStartingDirection().toVector().getY(),0);
         move(getGroundPoint());
     }
     public Point3D getGroundPoint() {
@@ -67,13 +67,13 @@ public class Leg {
     }
 
     public Leg moveStraight(Spherical s, double percentage){
-        double zValue = Math.max(0, Math.sin(percentage * 2*Math.PI / 100))*200;
-        Point3D fromPoint = getGroundPoint().add(s.getNegative().toPoint3D());
-        Point3D toPoint = getGroundPoint().add(s.toPoint3D());
-        if (percentage <= 50){
-            move(fromPoint.add(0,0,zValue).interpolate(toPoint.add(0,0,zValue), (percentage*2)/100));
+        double zValue = Math.sin(Math.max(0, ((percentage - 75.0) / (100.0 - 75.0)) * Math.PI)) * 100.0;
+        Point3D fromGroundPoint = getGroundPoint().add(s.toPoint3D());
+        Point3D toGroundPoint = getGroundPoint().add(s.getNegative().toPoint3D());
+        if (percentage <= 75.0){
+            move(fromGroundPoint.interpolate(toGroundPoint, (percentage / 75.0) ));
         }else {
-            move(toPoint.interpolate(fromPoint, ((percentage-50)*2)/100));
+            move(toGroundPoint.add(0,0,zValue).interpolate(fromGroundPoint.add(0,0,zValue), ((percentage - 75.0) / (100.0 - 75.0) )              )  );
         }
         return this;
     }

@@ -44,13 +44,12 @@ public class Main extends Application {
 
 
 
-        //spider = spider.increaseHeight();
+        //spider = spider.increaseHeight(400);
 
-        world.getChildren().addAll(spider.getDisplayNodes());
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (now - lastTime >= 1000000000 / 60) {
+                if (now - lastTime >= 1000000000 / 120) {
                     lastTime = now;
                     world.getChildren().clear();
                     spider = spider.moveStraight( new Spherical(0,90,500));

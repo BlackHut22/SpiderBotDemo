@@ -13,14 +13,14 @@ public class Spider {
     public Spider(Point3D middlePoint){
         this.middlePoint = middlePoint;
 
-        Leg R1 = new Leg(calcLegStartP(22.5,850),22.5);
-        Leg R2 = new Leg(calcLegStartP(67.5,850),67.5);
-        Leg R3 = new Leg(calcLegStartP(112.5,850),112.5);
-        Leg R4 = new Leg(calcLegStartP(157.5,850),157.5);
-        Leg L1 = new Leg(calcLegStartP(-22.5,850),-22.5);
-        Leg L2 = new Leg(calcLegStartP(-67.5,850),-67.5);
-        Leg L3 = new Leg(calcLegStartP(-112.5,850),-112.5);
-        Leg L4 = new Leg(calcLegStartP(-157.5,850),-157.5);
+        Leg R1 = new Leg(calcLegStartP(22.5,1000),22.5);
+        Leg R2 = new Leg(calcLegStartP(67.5,1000),67.5);
+        Leg R3 = new Leg(calcLegStartP(112.5,1000),112.5);
+        Leg R4 = new Leg(calcLegStartP(157.5,1000),157.5);
+        Leg L1 = new Leg(calcLegStartP(-22.5,1000),-22.5);
+        Leg L2 = new Leg(calcLegStartP(-67.5,1000),-67.5);
+        Leg L3 = new Leg(calcLegStartP(-112.5,1000),-112.5);
+        Leg L4 = new Leg(calcLegStartP(-157.5,1000),-157.5);
 
         this.legs.put("R1", R1);
         this.legs.put("R2", R2);
@@ -65,14 +65,14 @@ public class Spider {
     public Spider moveStraight(Spherical s){
         incrementPercentage();
         return this
-                .moveStraight("R1", s, getPercentage(75))
-                .moveStraight("R2", s, getPercentage(25))
-                .moveStraight("R3", s, getPercentage(75))
-                .moveStraight("R4", s, getPercentage(25))
-                .moveStraight("L4", s, getPercentage(75))
-                .moveStraight("L3", s, getPercentage(25))
-                .moveStraight("L2", s, getPercentage(75))
-                .moveStraight("L1", s, getPercentage(25));
+                .moveStraight("R1", s, getPercentage(0))
+                .moveStraight("R2", s, getPercentage(50))
+                .moveStraight("R3", s, getPercentage(25))
+                .moveStraight("R4", s, getPercentage(75))
+                .moveStraight("L4", s, getPercentage(0))
+                .moveStraight("L3", s, getPercentage(50))
+                .moveStraight("L2", s, getPercentage(25))
+                .moveStraight("L1", s, getPercentage(75));
 
     }
     public Spider moveDown(String leg){
