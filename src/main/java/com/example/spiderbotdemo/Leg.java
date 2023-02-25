@@ -8,7 +8,9 @@ import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Leg {
@@ -17,13 +19,22 @@ public class Leg {
     Point3D groundPoint;
     Spherical startingDirection;
     int segmentLength = 1000;
-    public Leg(Point3D startingPoint, double startingDirectionPhi){
+    int maxDistance = 500;
+    boolean direction;
+    public Leg(Point3D startingPoint, double startingDirectionPhi, boolean direction){
+        this.direction = direction;
         this.startingPoint = startingPoint;
         this.startingDirection = new Spherical(0,startingDirectionPhi,getSegmentLength());
         this.segments[0] = new Legsegment(getStartingPoint(), getStartingDirection(), getSegmentLength());
         this.segments[1] = new Legsegment(getSegments()[0].getEndingPoint(), getSegments()[0].getSpherical().getNegative().addTheta(180) ,getSegmentLength());
         this.groundPoint = getStartingPoint().add(getStartingDirection().toVector().getX(),getStartingDirection().toVector().getY(),0);
         move(getGroundPoint());
+    }
+    public int getMaxDistance() {
+        return maxDistance;
+    }
+    public boolean getDirection() {
+        return direction;
     }
     public Point3D getGroundPoint() {
         return groundPoint;
@@ -32,6 +43,7 @@ public class Leg {
         return startingPoint;
     }
     public Point3D getEndingPoint(){return getSegments()[1].getEndingPoint();}
+    public Point3D getEndingPointOnGround(){return new Point3D(getEndingPoint().getX(), getEndingPoint().getY(), 0);}
     public Spherical getStartingDirection() {
         return startingDirection;
     }
@@ -56,28 +68,60 @@ public class Leg {
         return this;
     }
 
+    public int projectedDistanceGroundPoint(){
+        return (int) getGroundPoint().distance(getEndingPointOnGround());
+    }
+
 
 
     public void move(Point3D point){
+        if (getDirection()) {
+            double zValue = Math.acos(point.distance(getGroundPoint()) / getMaxDistance()) * 100;
+            point = point.add(0, 0, zValue);
+        }
         shoulderPhi(new Vector(point.getX()-getStartingPoint().getX(),point.getY()-getStartingPoint().getY(),0).toSpherical().getPhi());
         double newVertexAngle = 2 *Math.toDegrees( Math.asin((point.distance(getStartingPoint())/2) / getSegmentLength()));
-        double extraThetaAngleStartingpointToZ = new Vector(point.getX()-getStartingPoint().getX(), point.getY()-getStartingPoint().getY(), point.getZ()-getStartingPoint().getZ()).toSpherical().getTheta();
-        shoulderTheta(((180-newVertexAngle)/2) + extraThetaAngleStartingpointToZ  );
+        double extraThetaAngleStartingPointToZ = new Vector(point.getX()-getStartingPoint().getX(), point.getY()-getStartingPoint().getY(), point.getZ()-getStartingPoint().getZ()).toSpherical().getTheta();
+        shoulderTheta(((180-newVertexAngle)/2) + extraThetaAngleStartingPointToZ  );
         elbowTheta(newVertexAngle);
     }
 
-    public Leg moveStraight(Spherical s, double percentage){
-        double zValue = Math.sin(Math.max(0, ((percentage - 75.0) / (100.0 - 75.0)) * Math.PI)) * 100.0;
-        Point3D fromGroundPoint = getGroundPoint().add(s.toPoint3D());
-        Point3D toGroundPoint = getGroundPoint().add(s.getNegative().toPoint3D());
-        if (percentage <= 75.0){
-            move(fromGroundPoint.interpolate(toGroundPoint, (percentage / 75.0) ));
-        }else {
-            move(toGroundPoint.add(0,0,zValue).interpolate(fromGroundPoint.add(0,0,zValue), ((percentage - 75.0) / (100.0 - 75.0) )              )  );
+    public Leg moveStraight(Spherical s){
+        double a = ((getEndingPointOnGround().getX() - getGroundPoint().getX()) * s.toVector().getX() + (getEndingPointOnGround().getY() - getGroundPoint().getY()) * s.toVector().getY()) / (Math.pow(s.toVector().getX(),2) + Math.pow(s.toVector().getY(),2));
+        double x = getGroundPoint().getX() + a * s.toVector().getX();
+        double y = getGroundPoint().getY() + a * s.toVector().getY();
+
+        double distance = Math.sqrt(Math.pow((getEndingPointOnGround().getX() - x),2) + Math.pow((getEndingPointOnGround().getY() - y),2));
+        double newDistance = Math.max(0, distance-1);
+
+        double Length = Math.sqrt(Math.pow(getMaxDistance(),2) - Math.pow(distance,2));
+        double newLength = Math.sqrt(Math.pow(getMaxDistance(),2) - Math.pow(newDistance,2));
+        double addSLength = newLength-Length;
+
+        Point3D point = new Point3D(x,y,0);
+
+        Point3D toPoint = getEndingPointOnGround();
+
+        if (getDirection()) {
+            toPoint = point.interpolate(toPoint,( Double.isNaN(newDistance/distance))?0:newDistance/distance);
+            toPoint = toPoint.add(s.addLength(addSLength).toPoint3D());
+        }else{
+            toPoint = toPoint.add(s.getNegative().toPoint3D());
         }
+
+        if (getGroundPoint().distance(toPoint) < getMaxDistance())
+            move(toPoint);
+        else
+            reverseDirection();
+
         return this;
     }
 
+
+
+    private void reverseDirection(){
+        this.direction = !getDirection();
+    }
     public Leg moveDown(){
         move(getEndingPoint().subtract(0,0,(getEndingPoint().getZ() >= 10)? 10 : getEndingPoint().getZ()));
         return this;
@@ -103,8 +147,8 @@ public class Leg {
         PhongMaterial mat4 = new PhongMaterial();
         sp4.setMaterial(mat4);
         mat4.setDiffuseColor(Color.RED);
-        Rotate phisp4 = new Rotate(90, Rotate.X_AXIS);
-        sp4.getTransforms().addAll(phisp4);
+        Rotate boxRotX = new Rotate(90, Rotate.X_AXIS);
+        sp4.getTransforms().addAll(boxRotX);
 
         Sphere sp3 = new Sphere();
         sp3.setRadius(50);

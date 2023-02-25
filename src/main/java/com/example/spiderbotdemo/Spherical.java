@@ -19,6 +19,7 @@ public class Spherical {
     public Spherical setLength(double length) {
         return new Spherical(getTheta(), getPhi(), length);
     }
+    public Spherical addLength(double length){return new Spherical(getTheta(),getPhi(),getLength()+length);}
     public Spherical addTheta(double theta){
         return new Spherical(getTheta() + theta, getPhi(), getLength());
     }

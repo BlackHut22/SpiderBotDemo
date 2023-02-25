@@ -8,19 +8,18 @@ import java.util.HashMap;
 
 public class Spider {
     HashMap<String, Leg> legs = new HashMap<>();
-    int percentage = 0;
     Point3D middlePoint;
     public Spider(Point3D middlePoint){
         this.middlePoint = middlePoint;
 
-        Leg R1 = new Leg(calcLegStartP(22.5,1000),22.5);
-        Leg R2 = new Leg(calcLegStartP(67.5,1000),67.5);
-        Leg R3 = new Leg(calcLegStartP(112.5,1000),112.5);
-        Leg R4 = new Leg(calcLegStartP(157.5,1000),157.5);
-        Leg L1 = new Leg(calcLegStartP(-22.5,1000),-22.5);
-        Leg L2 = new Leg(calcLegStartP(-67.5,1000),-67.5);
-        Leg L3 = new Leg(calcLegStartP(-112.5,1000),-112.5);
-        Leg L4 = new Leg(calcLegStartP(-157.5,1000),-157.5);
+        Leg R1 = new Leg(calcLegStartP(  22.5,1000),  22.5, true);
+        Leg R2 = new Leg(calcLegStartP(  67.5,1000),  67.5,false);
+        Leg R3 = new Leg(calcLegStartP( 112.5,1000), 112.5, true);
+        Leg R4 = new Leg(calcLegStartP( 157.5,1000), 157.5,false);
+        Leg L1 = new Leg(calcLegStartP( -22.5,1000), -22.5,false);
+        Leg L2 = new Leg(calcLegStartP( -67.5,1000), -67.5, true);
+        Leg L3 = new Leg(calcLegStartP(-112.5,1000),-112.5,false);
+        Leg L4 = new Leg(calcLegStartP(-157.5,1000),-157.5, true);
 
         this.legs.put("R1", R1);
         this.legs.put("R2", R2);
@@ -38,18 +37,6 @@ public class Spider {
     public Point3D getMiddlePoint() {
         return middlePoint;
     }
-    public int getPercentage() {
-        return percentage;
-    }
-    public int getPercentage(int add) {
-        return (percentage + add) % 100;
-    }
-    public void incrementPercentage(){
-        percentage += 1;
-        if (getPercentage() == 100){
-            percentage = 0;
-        }
-    }
     public void increaseHeight(String leg, int x){
         this.legs.put(leg, this.legs.get(leg).increaseHeight(x));
     }
@@ -57,22 +44,21 @@ public class Spider {
         getLegs().forEach((name, leg) -> increaseHeight(name, x));
         return this;
     }
-    public Spider moveStraight(String leg, Spherical s, int percentage){
-        this.legs.put(leg, this.legs.get(leg).moveStraight(s, percentage));
+    public Spider moveStraight(String leg, Spherical s){
+        this.legs.put(leg, this.legs.get(leg).moveStraight(s));
         return this;
     }
 
     public Spider moveStraight(Spherical s){
-        incrementPercentage();
         return this
-                .moveStraight("R1", s, getPercentage(0))
-                .moveStraight("R2", s, getPercentage(50))
-                .moveStraight("R3", s, getPercentage(25))
-                .moveStraight("R4", s, getPercentage(75))
-                .moveStraight("L4", s, getPercentage(0))
-                .moveStraight("L3", s, getPercentage(50))
-                .moveStraight("L2", s, getPercentage(25))
-                .moveStraight("L1", s, getPercentage(75));
+                .moveStraight("R1", s)
+                .moveStraight("R2", s)
+                .moveStraight("R3", s)
+                .moveStraight("R4", s)
+                .moveStraight("L4", s)
+                .moveStraight("L3", s)
+                .moveStraight("L2", s)
+                .moveStraight("L1", s);
 
     }
     public Spider moveDown(String leg){
@@ -80,7 +66,6 @@ public class Spider {
         return this;
     }
     public Spider moveDown(){
-        incrementPercentage();
         return this
                 .moveDown("R1")
                 .moveDown("R2")
@@ -91,21 +76,20 @@ public class Spider {
                 .moveDown("L2")
                 .moveDown("L1");
     }
-    public Spider rotateBody(String leg, int direction, int percentage){
-        //this.legs.put(leg, this.legs.get(leg).rotateBody(getMiddlePoint(), direction ,percentage));
+    public Spider rotateBody(String leg, int direction){
+        //this.legs.put(leg, this.legs.get(leg).rotateBody(getMiddlePoint(), direction));
         return this;
     }
     public Spider rotateBody(int direction){
-        incrementPercentage();
         return this
-                .rotateBody("R1", direction, getPercentage(75))
-                .rotateBody("R2", direction, getPercentage(25))
-                .rotateBody("R3", direction, getPercentage(75))
-                .rotateBody("R4", direction, getPercentage(25))
-                .rotateBody("L4", direction, getPercentage(75))
-                .rotateBody("L3", direction, getPercentage(25))
-                .rotateBody("L2", direction, getPercentage(75))
-                .rotateBody("L1", direction, getPercentage(25));
+                .rotateBody("R1", direction)
+                .rotateBody("R2", direction)
+                .rotateBody("R3", direction)
+                .rotateBody("R4", direction)
+                .rotateBody("L4", direction)
+                .rotateBody("L3", direction)
+                .rotateBody("L2", direction)
+                .rotateBody("L1", direction);
     }
 
 

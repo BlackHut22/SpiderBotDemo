@@ -45,6 +45,7 @@ public class Main extends Application {
 
 
         //spider = spider.increaseHeight(400);
+        world.getChildren().addAll(spider.getDisplayNodes());
 
         new AnimationTimer() {
             @Override
@@ -52,16 +53,25 @@ public class Main extends Application {
                 if (now - lastTime >= 1000000000 / 120) {
                     lastTime = now;
                     world.getChildren().clear();
-                    spider = spider.moveStraight( new Spherical(0,90,500));
+                    spider = spider.moveStraight( new Spherical(0,90,1));
                     //spider = spider.moveDown();
                     //spider = spider.rotateBody(1);
                     world.getChildren().addAll(spider.getDisplayNodes());
                 }
             }
-        }.start();
+        }.stop();
 
 
-
+        stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            world.getChildren().clear();
+            switch (event.getCode()) {
+                case W -> spider = spider.moveStraight( new Spherical(0,0,10));
+                case S -> spider = spider.moveStraight( new Spherical(0,180,10));
+                case A -> spider = spider.moveStraight( new Spherical(0,270,10));
+                case D -> spider = spider.moveStraight( new Spherical(0,90,10));
+            }
+            world.getChildren().addAll(spider.getDisplayNodes());
+        });
 
 
 
@@ -91,7 +101,7 @@ public class Main extends Application {
                 case NUMPAD7 -> world.getTransforms().add(new Rotate(1, Rotate.Z_AXIS));
                 case NUMPAD9 -> world.getTransforms().add(new Rotate(-1, Rotate.Z_AXIS));
             }
-            System.out.println(camera.getTranslateX() +" "+ camera.getTranslateY() +" "+ camera.getTranslateZ());
+            //System.out.println(camera.getTranslateX() +" "+ camera.getTranslateY() +" "+ camera.getTranslateZ());
         });
         camera.setFieldOfView(100);
         camera.setTranslateX(1570);
