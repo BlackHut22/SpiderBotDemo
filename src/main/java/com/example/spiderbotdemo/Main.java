@@ -2,7 +2,6 @@ package com.example.spiderbotdemo;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.image.Image;
@@ -65,10 +64,10 @@ public class Main extends Application {
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             world.getChildren().clear();
             switch (event.getCode()) {
-                case W -> spider = spider.moveStraight( new Spherical(0,0,10));
-                case S -> spider = spider.moveStraight( new Spherical(0,180,10));
-                case A -> spider = spider.moveStraight( new Spherical(0,270,10));
-                case D -> spider = spider.moveStraight( new Spherical(0,90,10));
+                case W -> spider = spider.moveStraight( new Spherical(0,0,5));
+                case S -> spider = spider.moveStraight( new Spherical(0,180,5));
+                case A -> spider = spider.moveStraight( new Spherical(0,270,5));
+                case D -> spider = spider.moveStraight( new Spherical(0,90,5));
             }
             world.getChildren().addAll(spider.getDisplayNodes());
         });

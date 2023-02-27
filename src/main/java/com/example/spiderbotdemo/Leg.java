@@ -8,9 +8,7 @@ import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Leg {
@@ -21,6 +19,8 @@ public class Leg {
     int segmentLength = 1000;
     int maxDistance = 500;
     boolean direction;
+
+    ArrayList<Node> toDraw = new ArrayList<>();
     public Leg(Point3D startingPoint, double startingDirectionPhi, boolean direction){
         this.direction = direction;
         this.startingPoint = startingPoint;
@@ -68,16 +68,18 @@ public class Leg {
         return this;
     }
 
-    public int projectedDistanceGroundPoint(){
-        return (int) getGroundPoint().distance(getEndingPointOnGround());
+    public double projectedDistanceGroundPoint(){
+        return getGroundPoint().distance(getEndingPointOnGround());
     }
 
-
+    public ArrayList<Node> getToDraw() {
+        return toDraw;
+    }
 
     public void move(Point3D point){
         if (getDirection()) {
             double zValue = Math.acos(point.distance(getGroundPoint()) / getMaxDistance()) * 100;
-            point = point.add(0, 0, zValue);
+            point = new Point3D(point.getX(), point.getY(), zValue);
         }
         shoulderPhi(new Vector(point.getX()-getStartingPoint().getX(),point.getY()-getStartingPoint().getY(),0).toSpherical().getPhi());
         double newVertexAngle = 2 *Math.toDegrees( Math.asin((point.distance(getStartingPoint())/2) / getSegmentLength()));
@@ -91,28 +93,29 @@ public class Leg {
         double x = getGroundPoint().getX() + a * s.toVector().getX();
         double y = getGroundPoint().getY() + a * s.toVector().getY();
 
-        double distance = Math.sqrt(Math.pow((getEndingPointOnGround().getX() - x),2) + Math.pow((getEndingPointOnGround().getY() - y),2));
-        double newDistance = Math.max(0, distance-1);
+        Point3D projectedPoint = new Point3D(x,y,0);
 
+        double distance = getEndingPointOnGround().distance(projectedPoint);
+        double newDistance = Math.max(0, distance-10);
         double Length = Math.sqrt(Math.pow(getMaxDistance(),2) - Math.pow(distance,2));
         double newLength = Math.sqrt(Math.pow(getMaxDistance(),2) - Math.pow(newDistance,2));
         double addSLength = newLength-Length;
 
-        Point3D point = new Point3D(x,y,0);
-
-        Point3D toPoint = getEndingPointOnGround();
-
+        Point3D currentPoint = getEndingPointOnGround();
+        Point3D toPoint;
         if (getDirection()) {
-            toPoint = point.interpolate(toPoint,( Double.isNaN(newDistance/distance))?0:newDistance/distance);
-            toPoint = toPoint.add(s.addLength(addSLength).toPoint3D());
+            Point3D newPoint = projectedPoint.interpolate(currentPoint,( Double.isNaN(newDistance/distance))?0:newDistance/distance);
+            toPoint = newPoint.add(s.addLength(addSLength).toPoint3D());
+
         }else{
-            toPoint = toPoint.add(s.getNegative().toPoint3D());
+            toPoint = currentPoint.add(s.getNegative().toPoint3D());
         }
 
-        if (getGroundPoint().distance(toPoint) < getMaxDistance())
-            move(toPoint);
-        else
+
+        if (getMaxDistance() - getGroundPoint().distance(toPoint) < 0)
             reverseDirection();
+        else
+            move(toPoint);
 
         return this;
     }

@@ -1,6 +1,5 @@
 package com.example.spiderbotdemo;
 
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import java.util.ArrayList;
@@ -51,14 +50,14 @@ public class Spider {
 
     public Spider moveStraight(Spherical s){
         return this
-                .moveStraight("R1", s)
-                .moveStraight("R2", s)
-                .moveStraight("R3", s)
+                //.moveStraight("R1", s)
+                //.moveStraight("R2", s)
+                //.moveStraight("R3", s)
                 .moveStraight("R4", s)
-                .moveStraight("L4", s)
-                .moveStraight("L3", s)
-                .moveStraight("L2", s)
-                .moveStraight("L1", s);
+                .moveStraight("L4", s);
+                //.moveStraight("L3", s)
+                //.moveStraight("L2", s)
+                //.moveStraight("L1", s);
 
     }
     public Spider moveDown(String leg){
@@ -106,6 +105,7 @@ public class Spider {
     public ArrayList<Node> getDisplayNodes(){
         ArrayList<Node> returnable = new ArrayList<>();
         this.getLegs().forEach((name, leg) -> returnable.addAll(leg.getDisplayNodes()));
+        this.getLegs().forEach((name, leg) -> returnable.addAll(leg.getToDraw()));
         return returnable;
     }
 
