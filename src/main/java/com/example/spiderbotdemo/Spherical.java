@@ -1,60 +1,63 @@
 package com.example.spiderbotdemo;
-import javafx.geometry.Point3D;
+
+import java.math.BigDecimal;
 
 public class Spherical {
-    double length;
-    double theta;
-    double phi;
-    public Spherical(double theta, double phi, double length){
+    BigDecimal length;
+    BigDecimal theta;
+    BigDecimal phi;
+
+    public Spherical(BigDecimal theta, BigDecimal phi, BigDecimal length){
         this.theta = theta;
         this.phi = phi;
         this.length = length;
     }
-    public Spherical setTheta(double theta){
+
+    public Spherical setTheta(BigDecimal theta){
         return new Spherical(theta, getPhi(), getLength());
     }
-    public Spherical setPhi(double phi){
+    public Spherical setPhi(BigDecimal phi){
         return new Spherical(getTheta(), phi, getLength());
     }
-    public Spherical setLength(double length) {
+    public Spherical setLength(BigDecimal length) {
         return new Spherical(getTheta(), getPhi(), length);
     }
-    public Spherical addTheta(double theta){
-        return new Spherical(getTheta() + theta, getPhi(), getLength());
+    public Spherical addTheta(BigDecimal theta){
+        return new Spherical(getTheta().add(theta), getPhi(), getLength());
     }
-    public Spherical addPhi(double phi){
-        return new Spherical(getTheta(), getPhi() + phi, getLength());
+    public Spherical addPhi(BigDecimal phi){
+        return new Spherical(getTheta(), getPhi().add(phi), getLength());
     }
-    public Spherical addLength(double length){return new Spherical(getTheta(),getPhi(),getLength()+length);}
-    public double getLength() {
+    public Spherical addLength(BigDecimal length){return new Spherical(getTheta(),getPhi(),getLength().add(length));}
+    public BigDecimal getLength() {
         return length;
     }
-    public double getPhi() {
+    public BigDecimal getPhi() {
         return phi;
     }
-    public double getTheta() {
+    public BigDecimal getTheta() {
         return theta;
     }
     public Vector toVector(){
-        double t = Math.toRadians(getTheta()) ;
-        double p = Math.toRadians(getPhi()) ;
-        double x = getLength() * Math.cos(t) * Math.sin(p);
-        double y = getLength() * Math.cos(t) * Math.cos(p);
-        double z = getLength() * Math.sin(t);
+        double t = Math.toRadians(getTheta().doubleValue()) ;
+        double p = Math.toRadians(getPhi().doubleValue()) ;
+        BigDecimal cosT = new BigDecimal(Double.toString(Math.cos(t)));
+        BigDecimal x = getLength().multiply(cosT).multiply(new BigDecimal(Double.toString(Math.sin(p))));
+        BigDecimal y = getLength().multiply(cosT).multiply(new BigDecimal(Double.toString(Math.cos(p))));
+        BigDecimal z = getLength().multiply(new BigDecimal(Double.toString(Math.sin(t))));
         return new Vector(x,y,z);
     }
-    public Point3D toPoint3D(){
-        double t = Math.toRadians(getTheta()) ;
-        double p = Math.toRadians(getPhi()) ;
-        double x = getLength() * Math.cos(t) * Math.sin(p);
-        double y = getLength() * Math.cos(t) * Math.cos(p);
-        double z = getLength() * Math.sin(t);
-        return new Point3D(x,y,z);
+    public Point3DBIGD toPoint3DBIGD(){
+        double t = Math.toRadians(getTheta().doubleValue()) ;
+        double p = Math.toRadians(getPhi().doubleValue()) ;
+        BigDecimal cosT = new BigDecimal(Double.toString(Math.cos(t)));
+        BigDecimal x = getLength().multiply(cosT).multiply(new BigDecimal(Double.toString(Math.sin(p))));
+        BigDecimal y = getLength().multiply(cosT).multiply(new BigDecimal(Double.toString(Math.cos(p))));
+        BigDecimal z = getLength().multiply(new BigDecimal(Double.toString(Math.sin(t))));
+        return new Point3DBIGD(x,y,z);
     }
     public Spherical getNegative(){
-        return new Spherical(getTheta()-180, getPhi(), getLength());
+        return new Spherical(getTheta().subtract(new BigDecimal("180")), getPhi(), getLength());
     }
-    public String print(){
-        return " Theta:" + Math.round(getTheta() * 100.0) / 100.0 + " Phi:" + Math.round(getPhi() * 100.0) / 100.0;
-    }
+
 }

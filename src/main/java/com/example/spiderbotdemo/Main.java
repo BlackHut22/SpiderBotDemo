@@ -2,7 +2,6 @@ package com.example.spiderbotdemo;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
@@ -12,6 +11,7 @@ import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class Main extends Application {
@@ -19,7 +19,7 @@ public class Main extends Application {
     private long lastTime = 0;
     double MAX_HEIGHT = 420;
     double MAX_WIDTH = 420;
-    Spider spider = new Spider(new Point3D(1750,2250,0));
+    Spider spider = new Spider(new Point3DBIGD(new BigDecimal("1750"),new BigDecimal("2250"),new BigDecimal("0")));
 
     public static void main(String[] args) {
         launch(args);
@@ -52,7 +52,7 @@ public class Main extends Application {
                 if (now - lastTime >= 1000000000 / 120) {
                     lastTime = now;
                     world.getChildren().clear();
-                    spider = spider.moveStraight( new Spherical(0,90,1));
+                    spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("90"),new BigDecimal(1)));
                     //spider = spider.moveDown();
                     //spider = spider.rotateBody(1);
                     world.getChildren().addAll(spider.getDisplayNodes());
@@ -64,10 +64,10 @@ public class Main extends Application {
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             world.getChildren().clear();
             switch (event.getCode()) {
-                case W -> spider = spider.moveStraight( new Spherical(0,0,5));
-                case S -> spider = spider.moveStraight( new Spherical(0,180,5));
-                case A -> spider = spider.moveStraight( new Spherical(0,270,5));
-                case D -> spider = spider.moveStraight( new Spherical(0,90,5));
+                case W -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("0"),  new BigDecimal("5")));
+                case S -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("180"),new BigDecimal("5")));
+                case A -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("270"),new BigDecimal("5")));
+                case D -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("90"), new BigDecimal("5")));
             }
             world.getChildren().addAll(spider.getDisplayNodes());
         });

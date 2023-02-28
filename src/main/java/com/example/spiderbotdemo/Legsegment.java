@@ -1,8 +1,5 @@
 package com.example.spiderbotdemo;
 
-import javafx.animation.RotateTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -10,58 +7,61 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
-import javafx.util.Duration;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 public class Legsegment {
-    Point3D startingPoint;
+    Point3DBIGD startingPoint;
     Spherical spherical;
-    double length;
+    BigDecimal length;
 
-    public Legsegment(Point3D startingPoint, Spherical spherical, double length){
+    public Legsegment(Point3DBIGD startingPoint, Spherical spherical, BigDecimal length){
         this.startingPoint = startingPoint;
         this.spherical = spherical;
         this.length = length;
     }
 
-    public Legsegment updateStartingPoint(Point3D startingPoint){
-        return new Legsegment(startingPoint, this.getSpherical(), getLength());
+    public Legsegment updateStartingPoint(Point3DBIGD startingPoint){
+        return new Legsegment(startingPoint, getSpherical(), getLength());
     }
 
-    public Legsegment addSphericalTheta(double theta){
-        return new Legsegment(this.getStartingPoint(), this.getSpherical().addTheta(theta), getLength());
+    public Legsegment addSphericalTheta(BigDecimal theta){
+        return new Legsegment(getStartingPoint(), getSpherical().addTheta(theta), getLength());
     }
 
-    public Legsegment addSphericalPhi(double phi){
-        return new Legsegment(this.getStartingPoint(), this.getSpherical().addPhi(phi), getLength());
+    public Legsegment addSphericalPhi(BigDecimal phi){
+        return new Legsegment(getStartingPoint(), getSpherical().addPhi(phi), getLength());
     }
 
-    public Legsegment setSphericalTheta(double theta){
-        return new Legsegment(this.getStartingPoint(), this.getSpherical().setTheta(theta), getLength());
+    public Legsegment setSphericalTheta(BigDecimal theta){
+        return new Legsegment(getStartingPoint(), getSpherical().setTheta(theta), getLength());
     }
 
-    public Legsegment setSphericalPhi(double phi){
-        return new Legsegment(this.getStartingPoint(), this.getSpherical().setPhi(phi), getLength());
+    public Legsegment setSphericalPhi(BigDecimal phi){
+        return new Legsegment(getStartingPoint(), getSpherical().setPhi(phi), getLength());
     }
 
     public Vector getDirection(){
-        return this.getSpherical().toVector();
+        return getSpherical().toVector();
     }
 
 
-    public Point3D getEndingPoint(){
-        return new Point3D(  this.getStartingPoint().getX()+((this.getLength()*this.getDirection().getX())/this.getDirection().getMagnitude()),
-                            this.getStartingPoint().getY()+((this.getLength()*this.getDirection().getY())/this.getDirection().getMagnitude()),
-                            this.getStartingPoint().getZ()+((this.getLength()*this.getDirection().getZ())/this.getDirection().getMagnitude())
+    public Point3DBIGD getEndingPoint(){
+        new Point3D(1,1,1).midpoint(new Point3D(1,1,1));
+        return new Point3DBIGD(getStartingPoint().getX().add(  (getLength().multiply(getDirection().getX())).divide(getDirection().getMagnitude(), MathContext.DECIMAL32)  ),
+                               getStartingPoint().getY().add(  (getLength().multiply(getDirection().getY())).divide(getDirection().getMagnitude(), MathContext.DECIMAL32)  ),
+                               getStartingPoint().getZ().add(  (getLength().multiply(getDirection().getZ())).divide(getDirection().getMagnitude(), MathContext.DECIMAL32)  )
         );
     }
 
-    public Point3D getMiddlePoint(){
+
+    public Point3DBIGD getMiddlePoint(){
         return getStartingPoint().midpoint(getEndingPoint());
     }
 
-    public Point3D getStartingPoint() {
+    public Point3DBIGD getStartingPoint() {
         return startingPoint;
     }
 
@@ -69,7 +69,7 @@ public class Legsegment {
         return spherical;
     }
 
-    public double getLength() {
+    public BigDecimal getLength() {
         return length;
     }
 
@@ -80,51 +80,33 @@ public class Legsegment {
         return new Legsegment(getStartingPoint(), spherical, getLength());
     }
 
-
-    public void updateGrapicsNode(Node node){
-        RotateTransition rotateTransition = new RotateTransition(Duration.millis(1), node);
-        rotateTransition.setByAngle(180f);
-        rotateTransition.setCycleCount(1);
-        rotateTransition.setAutoReverse(true);
-
-        SequentialTransition sequentialTransition = new SequentialTransition();
-        sequentialTransition.getChildren().add(rotateTransition);
-        sequentialTransition.setCycleCount(Timeline.INDEFINITE);
-        sequentialTransition.setAutoReverse(true);
-        sequentialTransition.play();
-    }
-
-
     public ArrayList<Node> getDisplayNodes(){
         Cylinder cylinder = new Cylinder();
-        cylinder.setHeight(this.getLength());
+        cylinder.setHeight(getLength().doubleValue());
         cylinder.setRadius(10);
-        cylinder.translateXProperty().set(this.getMiddlePoint().getX());
-        cylinder.translateYProperty().set(this.getMiddlePoint().getY());
-        cylinder.translateZProperty().set(this.getMiddlePoint().getZ());
+        cylinder.translateXProperty().set(getMiddlePoint().getX().doubleValue());
+        cylinder.translateYProperty().set(getMiddlePoint().getY().doubleValue());
+        cylinder.translateZProperty().set(getMiddlePoint().getZ().doubleValue());
         PhongMaterial mat = new PhongMaterial();
         cylinder.setMaterial(mat);
         mat.setDiffuseColor(Color.YELLOW);
 
-
-
-
-        Rotate thetaRot = new Rotate(this.getSpherical().getTheta(), Rotate.Z_AXIS);
+        Rotate thetaRot = new Rotate(getSpherical().getTheta().doubleValue(), Rotate.Z_AXIS);
         Rotate sigmaRot = new Rotate(90, Rotate.Y_AXIS);
-        Rotate phiRot = new Rotate(-this.getSpherical().getPhi(), Rotate.Z_AXIS);
+        Rotate phiRot = new Rotate(-getSpherical().getPhi().doubleValue(), Rotate.Z_AXIS);
 
         cylinder.getTransforms().addAll(phiRot, sigmaRot, thetaRot);
 
         Sphere sphere1 = new Sphere();
         sphere1.setRadius(10);
-        sphere1.translateXProperty().set(this.getStartingPoint().getX());
-        sphere1.translateYProperty().set(this.getStartingPoint().getY());
-        sphere1.translateZProperty().set(this.getStartingPoint().getZ());
+        sphere1.translateXProperty().set(getStartingPoint().getX().doubleValue());
+        sphere1.translateYProperty().set(getStartingPoint().getY().doubleValue());
+        sphere1.translateZProperty().set(getStartingPoint().getZ().doubleValue());
         Sphere sphere2 = new Sphere();
         sphere2.setRadius(10);
-        sphere2.translateXProperty().set(this.getEndingPoint().getX());
-        sphere2.translateYProperty().set(this.getEndingPoint().getY());
-        sphere2.translateZProperty().set(this.getEndingPoint().getZ());
+        sphere2.translateXProperty().set(getEndingPoint().getX().doubleValue());
+        sphere2.translateYProperty().set(getEndingPoint().getY().doubleValue());
+        sphere2.translateZProperty().set(getEndingPoint().getZ().doubleValue());
         PhongMaterial mat1 = new PhongMaterial();
         PhongMaterial mat2 = new PhongMaterial();
         sphere1.setMaterial(mat1);

@@ -1,24 +1,25 @@
 package com.example.spiderbotdemo;
 
-import javafx.geometry.Point3D;
 import javafx.scene.Node;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Spider {
     HashMap<String, Leg> legs = new HashMap<>();
-    Point3D middlePoint;
-    public Spider(Point3D middlePoint){
+    Point3DBIGD middlePoint;
+    public Spider(Point3DBIGD middlePoint){
         this.middlePoint = middlePoint;
 
-        Leg R1 = new Leg(calcLegStartP(  22.5,1000),  22.5, true);
-        Leg R2 = new Leg(calcLegStartP(  67.5,1000),  67.5,false);
-        Leg R3 = new Leg(calcLegStartP( 112.5,1000), 112.5, true);
-        Leg R4 = new Leg(calcLegStartP( 157.5,1000), 157.5,false);
-        Leg L1 = new Leg(calcLegStartP( -22.5,1000), -22.5,false);
-        Leg L2 = new Leg(calcLegStartP( -67.5,1000), -67.5, true);
-        Leg L3 = new Leg(calcLegStartP(-112.5,1000),-112.5,false);
-        Leg L4 = new Leg(calcLegStartP(-157.5,1000),-157.5, true);
+        Leg R1 = new Leg(calcLegStartP(  new BigDecimal(Double.toString(22.5)),new BigDecimal("1000")),  new BigDecimal(Double.toString(22.5)), true);
+        Leg R2 = new Leg(calcLegStartP(  new BigDecimal(Double.toString(67.5)),new BigDecimal("1000")),  new BigDecimal(Double.toString(67.5)),false);
+        Leg R3 = new Leg(calcLegStartP( new BigDecimal(Double.toString(112.5)),new BigDecimal("1000")), new BigDecimal(Double.toString(112.5)), true);
+        Leg R4 = new Leg(calcLegStartP( new BigDecimal(Double.toString(157.5)),new BigDecimal("1000")), new BigDecimal(Double.toString(157.5)),false);
+        Leg L1 = new Leg(calcLegStartP( new BigDecimal(Double.toString(-22.5)),new BigDecimal("1000")), new BigDecimal(Double.toString(-22.5)),false);
+        Leg L2 = new Leg(calcLegStartP( new BigDecimal(Double.toString(-67.5)),new BigDecimal("1000")), new BigDecimal(Double.toString(-67.5)), true);
+        Leg L3 = new Leg(calcLegStartP(new BigDecimal(Double.toString(-112.5)),new BigDecimal("1000")),new BigDecimal(Double.toString(-112.5)),false);
+        Leg L4 = new Leg(calcLegStartP(new BigDecimal(Double.toString(-157.5)),new BigDecimal("1000")),new BigDecimal(Double.toString(-157.5)), true);
 
         this.legs.put("R1", R1);
         this.legs.put("R2", R2);
@@ -29,17 +30,17 @@ public class Spider {
         this.legs.put("L2", L2);
         this.legs.put("L1", L1);
     }
-    private Point3D calcLegStartP(double phi, int distance){
-        Point3D v = new Spherical(0,phi,distance).toPoint3D();
+    private Point3DBIGD calcLegStartP(BigDecimal phi, BigDecimal distance){
+        Point3DBIGD v = new Spherical(new BigDecimal("0"),phi,distance).toPoint3DBIGD();
         return getMiddlePoint().add(v);
     }
-    public Point3D getMiddlePoint() {
+    public Point3DBIGD getMiddlePoint() {
         return middlePoint;
     }
-    public void increaseHeight(String leg, int x){
+    public void increaseHeight(String leg, BigDecimal x){
         this.legs.put(leg, this.legs.get(leg).increaseHeight(x));
     }
-    public Spider increaseHeight(int x){
+    public Spider increaseHeight(BigDecimal x){
         getLegs().forEach((name, leg) -> increaseHeight(name, x));
         return this;
     }
