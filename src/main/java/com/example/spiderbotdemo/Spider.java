@@ -37,34 +37,64 @@ public class Spider {
     public Point3DBIGD getMiddlePoint() {
         return middlePoint;
     }
-    public void increaseHeight(String leg, BigDecimal x){
+    private Spider increaseHeight(String leg, BigDecimal x){
         this.legs.put(leg, this.legs.get(leg).increaseHeight(x));
-    }
-    public Spider increaseHeight(BigDecimal x){
-        getLegs().forEach((name, leg) -> increaseHeight(name, x));
         return this;
     }
-    public Spider moveStraight(String leg, Spherical s){
+
+    public Spider increaseHeight(BigDecimal x){
+        return this
+                .increaseHeight("R1", x)
+                .increaseHeight("R2", x)
+                .increaseHeight("R3", x)
+                .increaseHeight("R4", x)
+                .increaseHeight("L4", x)
+                .increaseHeight("L3", x)
+                .increaseHeight("L2", x)
+                .increaseHeight("L1", x);
+    }
+    private Spider moveStraight(String leg, Spherical s){
         this.legs.put(leg, this.legs.get(leg).moveStraight(s));
+        return this;
+    }
+
+    private Spider reverseDirection(String leg){
+        this.legs.put(leg, this.legs.get(leg).reverseDirection());
+        return this;
+    }
+
+    public Spider checkDirectionChange(){
+        if (getLegs().get("R1").checkDirectionChange())
+            return this
+                    .reverseDirection("R1")
+                    .reverseDirection("R2")
+                    .reverseDirection("R3")
+                    .reverseDirection("R4")
+                    .reverseDirection("L4")
+                    .reverseDirection("L3")
+                    .reverseDirection("L2")
+                    .reverseDirection("L1");
         return this;
     }
 
     public Spider moveStraight(Spherical s){
         return this
-                //.moveStraight("R1", s)
-                //.moveStraight("R2", s)
-                //.moveStraight("R3", s)
+                .moveStraight("R1", s)
+                .moveStraight("R2", s)
+                .moveStraight("R3", s)
                 .moveStraight("R4", s)
-                .moveStraight("L4", s);
-                //.moveStraight("L3", s)
-                //.moveStraight("L2", s)
-                //.moveStraight("L1", s);
+                .moveStraight("L4", s)
+                .moveStraight("L3", s)
+                .moveStraight("L2", s)
+                .moveStraight("L1", s);
 
     }
     public Spider moveDown(String leg){
         this.legs.put(leg, this.legs.get(leg).moveDown());
         return this;
     }
+
+
     public Spider moveDown(){
         return this
                 .moveDown("R1")

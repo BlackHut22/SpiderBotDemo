@@ -76,31 +76,31 @@ public class Leg {
 
     public void move(Point3DBIGD point){
         if (getDirection()) {
-            double zUnitValue = Math.acos(point.distance(getGroundPoint()).divide(getMaxDistance(), MathContext.DECIMAL32).doubleValue());
+            double zUnitValue = Math.acos(point.distance(getGroundPoint()).divide(getMaxDistance(), MathContext.DECIMAL64).doubleValue());
             BigDecimal zValue = BigDecimal.valueOf((Double.isNaN(zUnitValue)) ? 0 : zUnitValue).multiply(new BigDecimal("100"));
             point = new Point3DBIGD(point.getX(), point.getY(), zValue);
         }
         shoulderPhi(new Vector(point.getX().subtract(getStartingPoint().getX()),point.getY().subtract(getStartingPoint().getY()),new BigDecimal("0")).toSpherical().getPhi());
-        BigDecimal newVertexAngle = new BigDecimal("2").multiply(new BigDecimal(Double.toString(Math.toDegrees( Math.asin((point.distance(getStartingPoint()).divide(new BigDecimal("2"),MathContext.DECIMAL32)).divide(getSegmentLength(),MathContext.DECIMAL32).doubleValue()))))) ;
+        BigDecimal newVertexAngle = new BigDecimal("2").multiply(new BigDecimal(Double.toString(Math.toDegrees( Math.asin((point.distance(getStartingPoint()).divide(new BigDecimal("2"),MathContext.DECIMAL64)).divide(getSegmentLength(),MathContext.DECIMAL64).doubleValue()))))) ;
         BigDecimal extraThetaAngleStartingPointToZ = new Vector(point.getX().subtract(getStartingPoint().getX()), point.getY().subtract(getStartingPoint().getY()), point.getZ().subtract(getStartingPoint().getZ())).toSpherical().getTheta();
-        shoulderTheta(((new BigDecimal("180").subtract(newVertexAngle)).divide(new BigDecimal("2"),MathContext.DECIMAL32)).add(extraThetaAngleStartingPointToZ));
+        shoulderTheta(((new BigDecimal("180").subtract(newVertexAngle)).divide(new BigDecimal("2"),MathContext.DECIMAL64)).add(extraThetaAngleStartingPointToZ));
         elbowTheta(newVertexAngle);
     }
 
     public Leg moveStraight(Spherical s){
         Point3DBIGD toPoint;
         if (getDirection()) {
-            BigDecimal a = ((getEndingPointOnGround().getX().subtract(getGroundPoint().getX())).multiply(s.toVector().getX()).add((getEndingPointOnGround().getY().subtract(getGroundPoint().getY())).multiply(s.toVector().getY()))).divide((s.toVector().getX().pow(2).add(s.toVector().getY().pow(2))),MathContext.DECIMAL32);
+            BigDecimal a = ((getEndingPointOnGround().getX().subtract(getGroundPoint().getX())).multiply(s.toVector().getX()).add((getEndingPointOnGround().getY().subtract(getGroundPoint().getY())).multiply(s.toVector().getY()))).divide((s.toVector().getX().pow(2).add(s.toVector().getY().pow(2))),MathContext.DECIMAL64);
             BigDecimal x = getGroundPoint().getX().add(a.multiply(s.toVector().getX()));
             BigDecimal y = getGroundPoint().getY().add(a.multiply(s.toVector().getY()));
             Point3DBIGD projectedPoint = new Point3DBIGD(x,y,new BigDecimal("0"));
-            BigDecimal distance = new BigDecimal(Double.toString(Math.max(0, getEndingPointOnGround().distance(projectedPoint).doubleValue())));
-            BigDecimal newDistance = distance.subtract(new BigDecimal("5"));
-            BigDecimal Length = ((getMaxDistance().pow(2)).subtract(distance.pow(2))).sqrt(MathContext.DECIMAL32);
-            BigDecimal newLength = ((getMaxDistance().pow(2)).subtract(newDistance.pow(2))).sqrt(MathContext.DECIMAL32);
+            BigDecimal distance = getEndingPointOnGround().distance(projectedPoint);
+            BigDecimal newDistance = new BigDecimal(Double.toString(Math.max(0, distance.subtract(new BigDecimal("5")).doubleValue())));
+            BigDecimal Length = ((getMaxDistance().pow(2)).subtract(distance.pow(2))).sqrt(MathContext.DECIMAL64);
+            BigDecimal newLength = ((getMaxDistance().pow(2)).subtract(newDistance.pow(2))).sqrt(MathContext.DECIMAL64);
             BigDecimal addSLength = newLength.subtract(Length);
 
-            Point3DBIGD newPoint = projectedPoint.interpolate(getEndingPointOnGround(),( distance.compareTo(new BigDecimal("0")) == 0)? new BigDecimal("0") : newDistance.divide(distance, MathContext.DECIMAL32));
+            Point3DBIGD newPoint = projectedPoint.interpolate(getEndingPointOnGround(),( distance.compareTo(new BigDecimal("0")) == 0)? new BigDecimal("0") : newDistance.divide(distance, MathContext.DECIMAL64));
 
             toPoint = newPoint.add(s.addLength(addSLength).toPoint3DBIGD());
 
@@ -110,17 +110,19 @@ public class Leg {
 
         move(toPoint);
 
-        System.out.println(Math.abs(getGroundPoint().distance(toPoint).subtract(getMaxDistance()).doubleValue()));
-        if (Math.abs(getGroundPoint().distance(toPoint).subtract(getMaxDistance()).doubleValue()) <= 5)
-            reverseDirection();
+
 
         return this;
     }
 
 
+    public Boolean checkDirectionChange(){
+        return getGroundPoint().distance(getEndingPointOnGround()).compareTo(getMaxDistance()) > 0;
+    }
 
-    private void reverseDirection(){
+    public Leg reverseDirection(){
         this.direction = !getDirection();
+        return this;
     }
     public Leg moveDown(){
         move(getEndingPoint().subtract(new BigDecimal("0"),new BigDecimal("0"),(getEndingPoint().getZ().compareTo(new BigDecimal("10")) >= 0)? new BigDecimal("10") : getEndingPoint().getZ()));

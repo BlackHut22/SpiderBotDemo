@@ -31,7 +31,7 @@ public class Vector {
     }
 
     public Spherical toSpherical(){
-        BigDecimal theta = new BigDecimal(Double.toString(Math.toDegrees(Math.asin( getZ().divide(getMagnitude(),MathContext.DECIMAL32).doubleValue())))) ;
+        BigDecimal theta = new BigDecimal(Double.toString(Math.toDegrees(Math.asin( getZ().divide(getMagnitude(),MathContext.DECIMAL64).doubleValue())))) ;
         BigDecimal phi = new BigDecimal(Double.toString(Math.toDegrees(Math.atan2( getX().doubleValue() , getY().doubleValue()))));
         return new Spherical(theta, phi, getMagnitude());
 

@@ -30,7 +30,7 @@ public class Point3DBIGD {
         BigDecimal a = getX().subtract(x1);
         BigDecimal b = getY().subtract(y1);
         BigDecimal c = getZ().subtract(z1);
-        return a.pow(2).add(b.pow(2)).add(c.pow(2)).sqrt(MathContext.DECIMAL32);
+        return a.pow(2).add(b.pow(2)).add(c.pow(2)).sqrt(MathContext.DECIMAL64);
     }
 
     public BigDecimal distance(Point3DBIGD  point) {
@@ -71,16 +71,16 @@ public class Point3DBIGD {
         }
 
         return new Point3DBIGD(
-                getX().divide(mag,MathContext.DECIMAL32),
-                getY().divide(mag,MathContext.DECIMAL32),
-                getZ().divide(mag,MathContext.DECIMAL32));
+                getX().divide(mag,MathContext.DECIMAL64),
+                getY().divide(mag,MathContext.DECIMAL64),
+                getZ().divide(mag,MathContext.DECIMAL64));
     }
 
     public Point3DBIGD midpoint(BigDecimal x, BigDecimal y, BigDecimal z) {
         return new Point3DBIGD(
-                x.add((getX().subtract(x)).divide(new BigDecimal("2"),MathContext.DECIMAL32)),
-                y.add((getY().subtract(y)).divide(new BigDecimal("2"),MathContext.DECIMAL32)),
-                z.add((getZ().subtract(z)).divide(new BigDecimal("2"),MathContext.DECIMAL32)));
+                x.add((getX().subtract(x)).divide(new BigDecimal("2"),MathContext.DECIMAL64)),
+                y.add((getY().subtract(y)).divide(new BigDecimal("2"),MathContext.DECIMAL64)),
+                z.add((getZ().subtract(z)).divide(new BigDecimal("2"),MathContext.DECIMAL64)));
     }
 
     public Point3DBIGD midpoint(Point3DBIGD point) {
@@ -92,7 +92,7 @@ public class Point3DBIGD {
         final BigDecimal ay = getY();
         final BigDecimal az = getZ();
 
-        final BigDecimal delta = (ax.multiply(x).add(ay.multiply(y)).add(az.multiply(z))).divide((((ax.pow(2).add(ay.pow(2)).add(az.pow(2))).multiply((x.pow(2).add(y.pow(2)).add(z.pow(2))))).sqrt(MathContext.DECIMAL32)),MathContext.DECIMAL32);
+        final BigDecimal delta = (ax.multiply(x).add(ay.multiply(y)).add(az.multiply(z))).divide((((ax.pow(2).add(ay.pow(2)).add(az.pow(2))).multiply((x.pow(2).add(y.pow(2)).add(z.pow(2))))).sqrt(MathContext.DECIMAL64)),MathContext.DECIMAL64);
 
         if (delta.compareTo(new BigDecimal("1")) > 0) {
             return new BigDecimal("0.0");
@@ -120,7 +120,7 @@ public class Point3DBIGD {
         final BigDecimal by = p2.getY().subtract(y);
         final BigDecimal bz = p2.getZ().subtract(z);
 
-        final BigDecimal delta = (ax.multiply(bx).add(ay.multiply(by)).add(az.multiply(bz))).divide((((ax.pow(2).add(ay.pow(2)).add(az.pow(2))).multiply((bx.pow(2).add(by.pow(2)).add(bz.pow(2))))).sqrt(MathContext.DECIMAL32)),MathContext.DECIMAL32);
+        final BigDecimal delta = (ax.multiply(bx).add(ay.multiply(by)).add(az.multiply(bz))).divide((((ax.pow(2).add(ay.pow(2)).add(az.pow(2))).multiply((bx.pow(2).add(by.pow(2)).add(bz.pow(2))))).sqrt(MathContext.DECIMAL64)),MathContext.DECIMAL64);
 
         if (delta.compareTo(new BigDecimal("1")) > 0) {
             return new BigDecimal("0.0");
@@ -137,7 +137,7 @@ public class Point3DBIGD {
         final BigDecimal y = getY();
         final BigDecimal z = getZ();
 
-        return (x.pow(2).add(y.pow(2)).add(z.pow(2))).sqrt(MathContext.DECIMAL32);
+        return (x.pow(2).add(y.pow(2)).add(z.pow(2))).sqrt(MathContext.DECIMAL64);
     }
 
     public BigDecimal dotProduct(BigDecimal x, BigDecimal y, BigDecimal z) {

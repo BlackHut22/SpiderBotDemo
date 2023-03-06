@@ -52,7 +52,7 @@ public class Main extends Application {
                 if (now - lastTime >= 1000000000 / 120) {
                     lastTime = now;
                     world.getChildren().clear();
-                    spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("90"),new BigDecimal(1)));
+                    spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("90"),new BigDecimal(1))).checkDirectionChange();
                     //spider = spider.moveDown();
                     //spider = spider.rotateBody(1);
                     world.getChildren().addAll(spider.getDisplayNodes());
@@ -64,10 +64,10 @@ public class Main extends Application {
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             world.getChildren().clear();
             switch (event.getCode()) {
-                case W -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("0"),  new BigDecimal("5")));
-                case S -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("180"),new BigDecimal("5")));
-                case A -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("270"),new BigDecimal("5")));
-                case D -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("90"), new BigDecimal("5")));
+                case W -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("0"),  new BigDecimal("5"))).checkDirectionChange();
+                case S -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("180"),new BigDecimal("5"))).checkDirectionChange();
+                case A -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("270"),new BigDecimal("5"))).checkDirectionChange();
+                case D -> spider = spider.moveStraight( new Spherical(new BigDecimal("0"),new BigDecimal("90"), new BigDecimal("5"))).checkDirectionChange();
             }
             world.getChildren().addAll(spider.getDisplayNodes());
         });

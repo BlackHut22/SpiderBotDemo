@@ -50,9 +50,9 @@ public class Legsegment {
 
     public Point3DBIGD getEndingPoint(){
         new Point3D(1,1,1).midpoint(new Point3D(1,1,1));
-        return new Point3DBIGD(getStartingPoint().getX().add(  (getLength().multiply(getDirection().getX())).divide(getDirection().getMagnitude(), MathContext.DECIMAL32)  ),
-                               getStartingPoint().getY().add(  (getLength().multiply(getDirection().getY())).divide(getDirection().getMagnitude(), MathContext.DECIMAL32)  ),
-                               getStartingPoint().getZ().add(  (getLength().multiply(getDirection().getZ())).divide(getDirection().getMagnitude(), MathContext.DECIMAL32)  )
+        return new Point3DBIGD(getStartingPoint().getX().add(  (getLength().multiply(getDirection().getX())).divide(getDirection().getMagnitude(), MathContext.DECIMAL64)  ),
+                               getStartingPoint().getY().add(  (getLength().multiply(getDirection().getY())).divide(getDirection().getMagnitude(), MathContext.DECIMAL64)  ),
+                               getStartingPoint().getZ().add(  (getLength().multiply(getDirection().getZ())).divide(getDirection().getMagnitude(), MathContext.DECIMAL64)  )
         );
     }
 
