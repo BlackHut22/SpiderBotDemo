@@ -4,41 +4,41 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 public class Vector {
-    BigDecimal x;
-    BigDecimal y;
-    BigDecimal z;
-    public Vector(BigDecimal x, BigDecimal y, BigDecimal z){
+    double x;
+    double y;
+    double z;
+    public Vector(double x, double y, double z){
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public BigDecimal getX() {
+    public double getX() {
         return x;
     }
 
-    public BigDecimal getY() {
+    public double getY() {
         return y;
     }
 
-    public BigDecimal getZ() {
+    public double getZ() {
         return z;
     }
 
 
-    public BigDecimal getMagnitude(){
-        return  getX().pow(2).add(getY().pow(2)).add(getZ().pow(2)).sqrt(MathContext.DECIMAL64);
+    public double getMagnitude(){
+        return Math.sqrt(Math.pow(getX(),2) + Math.pow(getY(),2) + Math.pow(getZ(),2));
     }
 
     public Spherical toSpherical(){
-        BigDecimal theta = new BigDecimal(Double.toString(Math.toDegrees(Math.asin( getZ().divide(getMagnitude(),MathContext.DECIMAL64).doubleValue())))) ;
-        BigDecimal phi = new BigDecimal(Double.toString(Math.toDegrees(Math.atan2( getX().doubleValue() , getY().doubleValue()))));
+        double theta = Math.toDegrees(Math.asin( getZ() / getMagnitude() )) ;
+        double phi = Math.toDegrees(Math.atan2( getX() , getY() ));
         return new Spherical(theta, phi, getMagnitude());
 
     }
 
     public Vector getNegative(){
-        return new Vector(getX().multiply(new BigDecimal(Integer.toString(-1))), getY().multiply(new BigDecimal(Integer.toString(-1))), getZ().multiply(new BigDecimal(Integer.toString(-1))));
+        return new Vector(-getX(), -getY(), -getZ());
     }
 
 }
